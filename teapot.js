@@ -52,8 +52,13 @@ let eye;
 let at = vec3(0.0, 0.0, 0.0);
 let up = vec3(0.0, 1.0, 0.0);
 
-export async function init() {
+function hsv2rgb(h,s,v) {
+	let f= (n,k=(n+h/60)%6) => v - v*s*Math.max( Math.min(k,4-k,1), 0);
+	return vec4(f(5),f(3),f(1), 1);
+}
 
+
+export async function init() {
 	canvas = document.querySelector("#teapot-canvas");
 
 	gl = WebGLUtils.setupWebGL(canvas);
@@ -65,7 +70,6 @@ export async function init() {
 	gl.enable(gl.DEPTH_TEST);
 	//gl.enable(gl.CULL_FACE);
 	//gl.cullFace(gl.BACK);
-
 
 	const myTeapot = teapot(15);
 	myTeapot.scale(0.5, 0.5, 0.5);
@@ -152,6 +156,38 @@ export async function init() {
 		}
 	});
 
+	const discardLengthLoc = gl.getUniformLocation(program, "discardLength");
+	let discardLength = 1.8;
+	let h = 180;
+	gl.uniform1f(discardLengthLoc, discardLength);
+
+	window.addEventListener("keydown", (e) => {
+		switch (e.key) {
+		case 'ArrowDown':
+			discardLength = Math.max(0, discardLength - 0.1);
+			gl.uniform1f(discardLengthLoc, discardLength);
+			break;
+		case 'ArrowUp':
+			discardLength = Math.min(4, discardLength + 0.1);
+			gl.uniform1f(discardLengthLoc, discardLength);
+			break;
+		case 'ArrowLeft':
+			h = knuth_mod(h - 1, 360);
+			gl.uniform4fv(
+				gl.getUniformLocation(program, "ambientProduct"),
+				flatten(mult(lightAmbient, hsv2rgb(h, 1, 1)))
+			);
+			break;
+		case 'ArrowRight':
+			h = knuth_mod(h + 1, 360);
+			gl.uniform4fv(
+				gl.getUniformLocation(program, "ambientProduct"),
+				flatten(mult(lightAmbient, hsv2rgb(h, 1, 1)))
+			);
+			break;
+		}
+	});
+
 	// Event listener for mousewheel
 	window.addEventListener("wheel", function(e){
 		if(e.deltaY > 0.0) {
@@ -185,4 +221,8 @@ function render() {
 
 	gl.drawArrays(gl.TRIANGLES, 0, points.length);
 	window.requestAnimFrame(render);
+}
+
+function knuth_mod(a, n) {
+	return a - n * Math.floor(a / n);
 }
