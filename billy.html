@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Billy</title>
+		<script src="MV.js"></script>
+		<script src="webgl-utils.js"></script>
+		<script type="module" src="shaders.js"></script>
+		<script type="module" src="billy.js"></script>
+		<script type="module">
+			import { init } from './billy.js';
+			window.onload = init;
+		</script>
+	</head>
+	<body>
+		<canvas id="billy-canvas" width="800" height="800"></canvas>
+	</body>
+</html>
