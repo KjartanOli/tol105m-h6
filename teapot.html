@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Teapot</title>
+		<script type="text/javascript" src="MV.js"></script>
+		<script type="text/javascript" src="webgl-utils.js"></script>
+		<script type="text/javascript" src="teapotData.js"></script>
+		<script type="module" src="shaders.js"></script>
+		<script type="module" src="teapot.js"></script>
+		<script type="module">
+			import { init } from './teapot.js';
+			window.onload = init;
+		</script>
+	</head>
+	<body>
+		<canvas id="teapot-canvas" width="600" height="600"></canvas>
+	</body>
+</html>
